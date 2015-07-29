@@ -1,0 +1,2 @@
+from 'relbot'
+run ['/bin/bash','-c','while true; do echo hello; sleep 1; done']
