@@ -21,8 +21,12 @@ module Rocker
       include Rocker::DSL
 
       def compose
-        instructions.reduce(nil) do |image, instruction|
-          instruction.run(image)
+        instructions.reduce(nil) do |config, instruction|
+          puts instruction.class.name
+          config = instruction.run(config)
+          puts "Image ID: #{config['Image']}"
+
+          config
         end
       end
     end

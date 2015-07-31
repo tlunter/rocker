@@ -11,5 +11,9 @@ module Rocker
     def run(*args)
       instructions << Instructions::Run.new(*args)
     end
+
+    def env(*args)
+      instructions << Instructions::Env.new(*args)
+    end
   end
 end

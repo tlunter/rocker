@@ -1,2 +1,5 @@
 from 'relbot'
+env 'ENV_TEST=1234'
+run ['/bin/bash','-c','touch /$ENV_TEST']
+run ['/bin/bash','-c','ls /']
 run ['/bin/bash','-c','while true; do echo hello; sleep 1; done']
