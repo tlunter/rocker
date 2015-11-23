@@ -9,12 +9,17 @@ module Rocker
       end
 
       def run(config)
+        container = run_container(config)
+        context.rewind
+        container.archive_in_stream(container_path) { context.read }
+        commit(config, container)
+      end
+
+      def run_config(config)
         run_config = config.dup
         run_config['Cmd'] = ['/bin/sh','-c',"# (nop) hash:#{hash_of_host_path}"]
-        container = run_container(run_config)
-        context.rewind
-        container.archive_in(container_path) { context.read }
-        commit(config, container)
+
+        run_config
       end
 
       def run_container(config)

@@ -1,9 +1,9 @@
 GIT
   remote: git://github.com/swipely/docker-api.git
-  revision: 33d54c414da7850b0bece75e78323e11d6bc527e
+  revision: ba408da63b5ce25d3e5753865d3834239a219ce4
   branch: add-archive
   specs:
-    docker-api (1.22.2)
+    docker-api (1.23.0)
       excon (>= 0.38.0)
       json
 

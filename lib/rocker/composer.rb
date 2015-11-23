@@ -21,13 +21,46 @@ module Rocker
       include Rocker::DSL
 
       def compose
-        instructions.reduce(nil) do |config, instruction|
-          puts instruction.class.name
-          config = instruction.run(config)
-          puts "Image ID: #{config['Image']}"
+        Rocker.logger.debug("Loading cache")
+        all_images
+
+        instructions.reduce({}) do |config, instruction|
+          Rocker.logger.debug(instruction.class.name)
+          container_config = instruction.run_config(config)
+          clean_config(container_config)
+
+          if image = find_in_cache(container_config)
+            config = image.info['ContainerConfig']
+            config['Image'] = image.id
+            Rocker.logger.debug("Image ID: #{config['Image']} (cache)")
+          else
+            config = instruction.run(container_config)
+            Rocker.logger.debug("Image ID: #{config['Image']}")
+          end
 
           config
         end
+      end
+
+      # Hack because docker returns `nil` versus `{}` in other parts of the API
+      def clean_config(config)
+        config['Labels'] ||= {}
+      end
+
+      def find_in_cache(config)
+        cache_for_image(config['Image']).find do |image|
+          image.info['ContainerConfig'] == config
+        end
+      end
+
+      def cache_for_image(image)
+        all_images
+          .select { |i| i.info['ParentId'] == image }
+          .map(&:refresh!)
+      end
+
+      def all_images
+        @all_images ||= Docker::Image.all(all: true)
       end
     end
   end

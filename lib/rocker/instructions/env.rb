@@ -8,8 +8,13 @@ module Rocker
       end
 
       def run(config)
+        config
+      end
+
+      def run_config(config)
+        config = config.dup
         config['Env'] ||= []
-        config['Env'] << env_variable
+        config['Env'] = config['Env'].dup + [*env_variable]
 
         config
       end

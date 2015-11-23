@@ -7,7 +7,7 @@ module Rocker
         @image_id_or_repo_tag = image_id_or_repo_tag
       end
 
-      def run(config)
+      def run(_)
         image = find_local_image_by_id || find_local_image_by_repotag || pull_image
         config = image.json['Config']
         if config['Env'].nil? || config['Env'].length == 0
@@ -15,6 +15,10 @@ module Rocker
         end
         config['Image'] = image.id
 
+        config
+      end
+
+      def run_config(config)
         config
       end
 
@@ -32,7 +36,9 @@ module Rocker
       end
 
       def pull_image
-        Docker::Image.create('fromImage' => image_id_or_repo_tag)
+        Docker::Image.create('fromImage' => image_id_or_repo_tag) do |chunk|
+          Rocker.logger.debug(" -> #{chunk}")
+        end
       end
     end
   end

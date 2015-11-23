@@ -1,9 +1,14 @@
 # Gem dependencies
 require 'docker'
-require 'pry'
+require 'logger'
 require 'digest'
 
 module Rocker
+  def logger
+    defined?(Rails) ? Rails.logger : Logger.new(STDOUT)
+  end
+  module_function :logger
+
   module Util
     extend self
 

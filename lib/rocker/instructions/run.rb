@@ -8,18 +8,23 @@ module Rocker
       end
 
       def run(config)
+        container = run_container(config)
+        commit(config, container)
+      end
+
+      def run_config(config)
         run_config = config.dup
         run_config['Cmd'] = cmd
 
-        container = run_container(run_config)
-        commit(config, container)
+        run_config
       end
 
       def run_container(config)
         container = create_container(config)
         container.start
+        Rocker.logger.debug("Running: #{cmd}")
         container.streaming_logs(stdout: true, stderr: true, follow: true) do |stream, chunk|
-          puts "#{stream}: #{chunk}"
+          Rocker.logger.debug(" -> #{stream}: #{chunk.chomp}")
         end
         container.wait
         container
