@@ -1,4 +1,5 @@
 module Rocker
+  # Runs all the Rockerfile instructions via a simple interface
   class Composer
     def self.run
       new.run
@@ -17,29 +18,33 @@ module Rocker
       store.compose
     end
 
+    # Contains the instructions to run
     class Store
       include Rocker::DSL
 
       def compose
-        Rocker.logger.debug("Loading cache")
+        Rocker.logger.debug('Loading cache')
         all_images
 
         instructions.reduce({}) do |config, instruction|
           Rocker.logger.debug(instruction.class.name)
           container_config = instruction.run_config(config)
           clean_config(container_config)
-
-          if image = find_in_cache(container_config)
-            config = image.info['ContainerConfig']
-            config['Image'] = image.id
-            Rocker.logger.debug("Image ID: #{config['Image']} (cache)")
-          else
-            config = instruction.run(container_config)
-            Rocker.logger.debug("Image ID: #{config['Image']}")
-          end
-
-          config
+          find_or_run(container_config)
         end
+      end
+
+      def find_or_run(container_config)
+        if (image = find_in_cache(container_config))
+          config = image.info['ContainerConfig']
+          config['Image'] = image.id
+          Rocker.logger.debug("Image ID: #{config['Image']} (cache)")
+        else
+          config = instruction.run(container_config)
+          Rocker.logger.debug("Image ID: #{config['Image']}")
+        end
+
+        config
       end
 
       # Hack because docker returns `nil` versus `{}` in other parts of the API

@@ -1,5 +1,6 @@
 module Rocker
   module Instructions
+    # Env instruction mimics Dockerfile's ENV
     class Env
       attr_reader :env_variable
 
@@ -21,4 +22,3 @@ module Rocker
     end
   end
 end
-

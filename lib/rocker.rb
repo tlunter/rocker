@@ -3,15 +3,16 @@ require 'docker'
 require 'logger'
 require 'digest'
 
+# Rocker gem that builds Rockerfiles
 module Rocker
   def logger
     defined?(Rails) ? Rails.logger : Logger.new(STDOUT)
   end
   module_function :logger
 
+  # Utility module to build tars
   module Util
-    extend self
-
+    # rubocop:disable Metrics/AbcSize,Metrics/MethodLength
     def create_relative_file_tar(file, output)
       if File.directory?(file)
         directory = file
@@ -35,6 +36,8 @@ module Rocker
         end
       end
     end
+    # rubocop:enable Metrics/AbcSize,Metrics/MethodLength
+    module_function :create_relative_file_tar
   end
 end
 

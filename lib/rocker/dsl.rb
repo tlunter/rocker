@@ -1,4 +1,5 @@
 module Rocker
+  # DSL methods to parse the Rockerfile
   module DSL
     def instructions
       @instructions ||= []

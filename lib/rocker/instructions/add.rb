@@ -1,5 +1,6 @@
 module Rocker
   module Instructions
+    # Add instruction mimics Dockerfile's ADD
     class Add
       attr_reader :host_path, :container_path
 
@@ -17,7 +18,11 @@ module Rocker
 
       def run_config(config)
         run_config = config.dup
-        run_config['Cmd'] = ['/bin/sh','-c',"# (nop) hash:#{hash_of_host_path}"]
+        run_config['Cmd'] = [
+          '/bin/sh',
+          '-c',
+          "# (nop) hash:#{hash_of_host_path}"
+        ]
 
         run_config
       end
@@ -25,7 +30,9 @@ module Rocker
       def run_container(config)
         container = create_container(config)
         container.start
-        container.streaming_logs(stdout: true, stderr: true, follow: true) do |stream, chunk|
+        container.streaming_logs(
+          stdout: true, stderr: true, follow: true
+        ) do |stream, chunk|
           puts "#{stream}: #{chunk}"
         end
         container.wait
@@ -43,7 +50,7 @@ module Rocker
 
       def hash_of_host_path
         path = host_path
-        raise "`#{path}` doesn't exist!" unless File.exist?(path)
+        fail "`#{path}` doesn't exist!" unless File.exist?(path)
 
         path += '/' if File.directory?(path) && !path.end_with?('/')
 

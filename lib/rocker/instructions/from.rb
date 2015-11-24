@@ -1,18 +1,21 @@
 module Rocker
   module Instructions
+    # From instruction mimics Dockerfile's FROM
     class From
-      attr_reader :image_id_or_repo_tag
+      attr_reader :id_or_repo_tag
 
-      def initialize(image_id_or_repo_tag)
-        @image_id_or_repo_tag = image_id_or_repo_tag
+      DEFAULT_PATH = [
+        'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+      ]
+
+      def initialize(id_or_repo_tag)
+        @id_or_repo_tag = id_or_repo_tag
       end
 
       def run(_)
-        image = find_local_image_by_id || find_local_image_by_repotag || pull_image
+        image = find_by_id || find_by_repotag || pull_image
         config = image.json['Config']
-        if config['Env'].nil? || config['Env'].length == 0
-          config['Env'] ||= ["PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"]
-        end
+        config['Env'] ||= DEFAULT_PATH if config['Env'] && config['Env'].empty?
         config['Image'] = image.id
 
         config
@@ -26,17 +29,19 @@ module Rocker
         Docker::Image.all
       end
 
-      def find_local_image_by_id
-        local_images.find { |image| image.id == image_id_or_repo_tag }
+      def find_by_id
+        local_images.find { |image| image.id == id_or_repo_tag }
       end
 
-      def find_local_image_by_repotag
-        image_id_or_repo_tag << ':latest' unless image_id_or_repo_tag.include?(':')
-        local_images.find { |image| image.info['RepoTags'].include?(image_id_or_repo_tag) }
+      def find_by_repotag
+        id_or_repo_tag << ':latest' unless id_or_repo_tag.include?(':')
+        local_images.find do |image|
+          image.info['RepoTags'].include?(id_or_repo_tag)
+        end
       end
 
       def pull_image
-        Docker::Image.create('fromImage' => image_id_or_repo_tag) do |chunk|
+        Docker::Image.create('fromImage' => id_or_repo_tag) do |chunk|
           Rocker.logger.debug(" -> #{chunk}")
         end
       end

@@ -1,5 +1,6 @@
 module Rocker
   module Instructions
+    # Run instruction mimics Dockerfile's RUN
     class Run
       attr_reader :cmd
 
@@ -23,7 +24,9 @@ module Rocker
         container = create_container(config)
         container.start
         Rocker.logger.debug("Running: #{cmd}")
-        container.streaming_logs(stdout: true, stderr: true, follow: true) do |stream, chunk|
+        container.streaming_logs(
+          stdout: true, stderr: true, follow: true
+        ) do |stream, chunk|
           Rocker.logger.debug(" -> #{stream}: #{chunk.chomp}")
         end
         container.wait
