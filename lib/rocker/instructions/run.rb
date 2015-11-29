@@ -15,7 +15,7 @@ module Rocker
 
       def run_config(config)
         run_config = config.dup
-        run_config['Cmd'] = cmd
+        run_config['Cmd'] = cmd.is_a?(String) ? cmd.split : cmd
 
         run_config
       end
@@ -29,7 +29,11 @@ module Rocker
         ) do |stream, chunk|
           Rocker.logger.debug(" -> #{stream}: #{chunk.chomp}")
         end
-        container.wait
+        exit_status = (container.wait || {})['StatusCode']
+
+        fail "Command returned non-zero exit status: #{exit_status}" \
+          unless exit_status && exit_status.zero?
+
         container
       end
 

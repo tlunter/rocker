@@ -30,11 +30,11 @@ module Rocker
           Rocker.logger.debug(instruction.class.name)
           container_config = instruction.run_config(config)
           clean_config(container_config)
-          find_or_run(container_config)
+          find_or_run(container_config, instruction)
         end
       end
 
-      def find_or_run(container_config)
+      def find_or_run(container_config, instruction)
         if (image = find_in_cache(container_config))
           config = image.info['ContainerConfig']
           config['Image'] = image.id
