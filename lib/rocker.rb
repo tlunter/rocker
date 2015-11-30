@@ -13,6 +13,6 @@ end
 
 # Gem code
 require 'rocker/util'
-require 'rocker/instructions'
 require 'rocker/dsl'
+require 'rocker/instructions'
 require 'rocker/composer'

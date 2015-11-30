@@ -50,3 +50,5 @@ module Rocker
     end
   end
 end
+
+Rocker::DSL.register(:run, Rocker::Instructions::Run)

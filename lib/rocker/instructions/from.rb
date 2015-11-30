@@ -48,3 +48,5 @@ module Rocker
     end
   end
 end
+
+Rocker::DSL.register(:from, Rocker::Instructions::From)

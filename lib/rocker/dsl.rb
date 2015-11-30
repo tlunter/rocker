@@ -5,20 +5,11 @@ module Rocker
       @instructions ||= []
     end
 
-    def from(*args)
-      instructions << Instructions::From.new(*args)
+    def register(word, klass)
+      define_method(word) do |*args|
+        instructions << klass.new(*args)
+      end
     end
-
-    def run(*args)
-      instructions << Instructions::Run.new(*args)
-    end
-
-    def env(*args)
-      instructions << Instructions::Env.new(*args)
-    end
-
-    def add(*args)
-      instructions << Instructions::Add.new(*args)
-    end
+    module_function :register
   end
 end

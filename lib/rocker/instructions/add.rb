@@ -74,3 +74,5 @@ module Rocker
     end
   end
 end
+
+Rocker::DSL.register(:add, Rocker::Instructions::Add)

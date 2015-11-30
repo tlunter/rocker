@@ -22,3 +22,5 @@ module Rocker
     end
   end
 end
+
+Rocker::DSL.register(:env, Rocker::Instructions::Env)
