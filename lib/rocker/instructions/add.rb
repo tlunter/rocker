@@ -33,7 +33,7 @@ module Rocker
         container.streaming_logs(
           stdout: true, stderr: true, follow: true
         ) do |stream, chunk|
-          puts "#{stream}: #{chunk}"
+          Rocker.logger.debug("#{stream}: #{chunk}")
         end
         container.wait
         container
