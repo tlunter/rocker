@@ -38,7 +38,8 @@ module Rocker
       end
 
       def commit(config, container)
-        image = container.commit
+        config['Cmd'] = ['/bin/bash']
+        image = container.commit('run' => config)
         config['Image'] = image.id
 
         config
