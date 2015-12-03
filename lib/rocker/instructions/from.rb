@@ -1,7 +1,7 @@
 module Rocker
   module Instructions
     # From instruction mimics Dockerfile's FROM
-    class From
+    class From < Base
       attr_reader :id_or_repo_tag
 
       DEFAULT_PATH = [
@@ -18,10 +18,6 @@ module Rocker
         config['Env'] ||= DEFAULT_PATH if config['Env'] && config['Env'].empty?
         config['Image'] = image.id
 
-        config
-      end
-
-      def run_config(config)
         config
       end
 

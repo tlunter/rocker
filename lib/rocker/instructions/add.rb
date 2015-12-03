@@ -1,7 +1,7 @@
 module Rocker
   module Instructions
     # Add instruction mimics Dockerfile's ADD
-    class Add
+    class Add < Base
       attr_reader :host_path, :container_path
 
       def initialize(host_path, container_path)
@@ -27,18 +27,6 @@ module Rocker
         run_config
       end
 
-      def run_container(config)
-        container = create_container(config)
-        container.start
-        container.streaming_logs(
-          stdout: true, stderr: true, follow: true
-        ) do |stream, chunk|
-          Rocker.logger.debug("#{stream}: #{chunk}")
-        end
-        container.wait
-        container
-      end
-
       def context
         return @output if @output
         @output = StringIO.new
@@ -59,17 +47,6 @@ module Rocker
         sha256 = Digest::SHA256.new
         sha256 << output.string
         sha256.hexdigest
-      end
-
-      def create_container(config)
-        @container ||= Docker::Container.create(config)
-      end
-
-      def commit(config, container)
-        image = container.commit
-        config['Image'] = image.id
-
-        config
       end
     end
   end

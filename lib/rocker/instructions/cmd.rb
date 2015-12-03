@@ -1,16 +1,11 @@
 module Rocker
   module Instructions
     # Cmd instruction mimics Dockerfile's CMD
-    class Cmd
+    class Cmd < Base
       attr_reader :cmd
 
       def initialize(cmd)
         @cmd = cmd
-      end
-
-      def run(config)
-        container = run_container(config)
-        commit(config, container)
       end
 
       def run_config(config)
@@ -22,22 +17,6 @@ module Rocker
         ]
 
         run_config
-      end
-
-      def run_container(config)
-        container = create_container(config)
-        container.start
-        container.streaming_logs(
-          stdout: true, stderr: true, follow: true
-        ) do |stream, chunk|
-          Rocker.logger.debug("#{stream}: #{chunk}")
-        end
-        container.wait
-        container
-      end
-
-      def create_container(config)
-        @container ||= Docker::Container.create(config)
       end
 
       def commit(config, container)
