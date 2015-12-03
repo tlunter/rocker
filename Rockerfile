@@ -11,5 +11,9 @@ run ['/bin/bash','-c','mkdir /test']
 add 'lib', '/test'
 run ['/bin/bash','-c','ls /test']
 
+workdir '/etc'
+run ['/bin/ls']
+
 #run ['/bin/bash','-c','while true; do echo hello; sleep 1; done']
+
 cmd ['/bin/true']
