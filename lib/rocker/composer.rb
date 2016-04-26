@@ -21,16 +21,20 @@ module Rocker
     # Contains the instructions to run
     class Store
       include Rocker::DSL
+      include Rocker::Util::LogHelper
+
+      log_prefix "Store"
 
       def compose
-        Rocker.logger.debug('Loading cache')
+        debug('Loading cache')
         all_images
 
         instructions.reduce({}) do |config, instruction|
-          Rocker.logger.debug(instruction.class.name)
-          container_config = instruction.run_config(config)
-          clean_config(container_config)
-          find_or_run(container_config, instruction)
+          tagged(instruction.class.name) do
+            container_config = instruction.run_config(config)
+            clean_config(container_config)
+            find_or_run(container_config, instruction)
+          end
         end
       end
 
@@ -38,10 +42,10 @@ module Rocker
         if (image = find_in_cache(container_config))
           config = image.info['ContainerConfig']
           config['Image'] = image.id
-          Rocker.logger.debug("Image ID: #{config['Image']} (cache)")
+          debug("Image ID: #{config['Image']} (cache)")
         else
           config = instruction.run(container_config)
-          Rocker.logger.debug("Image ID: #{config['Image']}")
+          debug("Image ID: #{config['Image']}")
         end
 
         config

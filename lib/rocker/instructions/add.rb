@@ -2,6 +2,8 @@ module Rocker
   module Instructions
     # Add instruction mimics Dockerfile's ADD
     class Add < Base
+      include Rocker::Util::LogHelper
+
       attr_reader :host_path, :container_path
 
       def initialize(host_path, container_path)

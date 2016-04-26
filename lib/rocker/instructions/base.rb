@@ -2,6 +2,8 @@ module Rocker
   module Instructions
     # Base instruction handles default methods
     class Base
+      include Rocker::Util::LogHelper
+
       def run(config)
         container = run_container(config)
         commit(config, container)
@@ -18,7 +20,7 @@ module Rocker
         container.streaming_logs(
           stdout: true, stderr: true, follow: true
         ) do |stream, chunk|
-          Rocker.logger.debug(" -> #{stream}: #{chunk.chomp}")
+          debug(" -> #{stream}: #{chunk.chomp}")
         end
 
         exit_status = (container.wait || {})['StatusCode']
