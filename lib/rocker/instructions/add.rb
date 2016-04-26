@@ -14,7 +14,7 @@ module Rocker
       def run(config)
         container = run_container(config)
         context.rewind
-        container.archive_in_stream(container_path) { context.read }
+        container.archive_in_stream(container_dir) { context.read }
         commit(config, container)
       end
 
@@ -36,6 +36,14 @@ module Rocker
         Rocker::Util::Tar.create_relative_file_tar(host_path, @output)
 
         @output
+      end
+
+      def container_dir
+        if container_path.end_with?('/')
+          container_path
+        else
+          File.dirname(container_path)
+        end
       end
 
       def hash_of_host_path
