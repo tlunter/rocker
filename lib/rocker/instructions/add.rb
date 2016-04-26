@@ -31,7 +31,7 @@ module Rocker
         return @output if @output
         @output = StringIO.new
 
-        Rocker::Util.create_relative_file_tar(host_path, @output)
+        Rocker::Util::Tar.create_relative_file_tar(host_path, @output)
 
         @output
       end
@@ -43,7 +43,7 @@ module Rocker
         path += '/' if File.directory?(path) && !path.end_with?('/')
 
         output = StringIO.new
-        Rocker::Util.create_relative_file_tar(path, output)
+        Rocker::Util::Tar.create_relative_file_tar(path, output)
         sha256 = Digest::SHA256.new
         sha256 << output.string
         sha256.hexdigest
