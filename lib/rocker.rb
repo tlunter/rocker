@@ -6,7 +6,9 @@ require 'digest'
 # Rocker gem that builds Rockerfiles
 module Rocker
   def logger
-    defined?(Rails) ? Rails.logger : Logger.new(STDOUT)
+    @logger ||= Rocker::Util::Logger.new(
+      defined?(Rails) ? Rails.logger : Logger.new(STDOUT)
+    )
   end
   module_function :logger
 end
