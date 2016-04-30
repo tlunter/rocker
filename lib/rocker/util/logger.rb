@@ -13,7 +13,7 @@ module Rocker
       def setup_prefix
         original_formatter = wrapped_logger.formatter || ::Logger::Formatter.new
         wrapped_logger.formatter = proc do |severity, datetime, progname, msg|
-          prefix = context.map { |prefix| "[#{prefix}]" }.join
+          prefix = context.compact.map { |prefix| "[#{prefix}]" }.join
           new_msg = prefix.empty? ? msg : "#{prefix} #{msg}"
           original_formatter.call(severity, datetime, progname, new_msg)
         end
