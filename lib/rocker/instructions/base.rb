@@ -5,6 +5,7 @@ module Rocker
       include Rocker::Util::LogHelper
 
       def run(config)
+        debug "#{self.inspect}"
         container = run_container(config)
         commit(config, container)
       end

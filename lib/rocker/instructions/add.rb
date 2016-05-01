@@ -4,6 +4,8 @@ module Rocker
     class Add < Base
       include Rocker::Util::LogHelper
 
+      log_prefix "Add"
+
       attr_reader :host_path, :container_path
 
       def initialize(host_path, container_path)
