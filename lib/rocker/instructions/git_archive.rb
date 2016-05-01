@@ -4,7 +4,7 @@ module Rocker
     class GitArchive < Add
       include Rocker::Util::LogHelper
 
-      attr_reader :repo_path, :container_path
+      attr_reader :repo_path, :container_path, :options
 
       def initialize(repo_path, container_path, options: {})
         @repo_path = repo_path
@@ -16,7 +16,7 @@ module Rocker
         return @output if @output
         @output = StringIO.new
 
-        IO.popen("git archive --format=tar #{branch}") do |io|
+        IO.popen("cd #{repo_path} && git archive --format=tar #{branch}") do |io|
           @output.write(io.read)
         end
 
@@ -24,10 +24,10 @@ module Rocker
       end
 
       def branch
-        options[:branch] || "master"
+        options[:branch] || "HEAD"
       end
 
-      def hash_of_repo_path
+      def hash_of_host_path
         context.rewind
         sha256 = Digest::SHA256.new
         sha256 << context.string
