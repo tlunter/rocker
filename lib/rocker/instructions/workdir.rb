@@ -10,14 +10,22 @@ module Rocker
 
       def run_config(config)
         run_config = config.dup
-        run_config['WorkingDir'] = workdir
+        run_config['WorkingDir'] = cleaned_workdir
         run_config['Cmd'] = [
           '/bin/sh',
           '-c',
-          "# WORKDIR #{workdir}"
+          "# WORKDIR #{cleaned_workdir}"
         ]
 
         run_config
+      end
+
+      def cleaned_workdir
+        if workdir.end_with?('/')
+          workdir[0..-2]
+        else
+          workdir
+        end
       end
     end
   end
