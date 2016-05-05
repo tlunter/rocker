@@ -12,6 +12,8 @@ add 'lib', '/test'
 run ['/bin/bash','-c','ls /test']
 
 workdir '/etc'
+
+entrypoint ['/bin/ls']
 run ['/bin/ls']
 
 #run ['/bin/bash','-c','while true; do echo hello; sleep 1; done']

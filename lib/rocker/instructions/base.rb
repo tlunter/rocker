@@ -15,20 +15,7 @@ module Rocker
       end
 
       def run_container(config)
-        container = create_container(config)
-        container.start
-
-        container.streaming_logs(
-          stdout: true, stderr: true, follow: true
-        ) do |stream, chunk|
-          debug(" -> #{stream}: #{chunk.chomp}")
-        end
-
-        exit_status = (container.wait || {})['StatusCode']
-        fail "Command returned non-zero exit status: #{exit_status}" \
-          unless exit_status && exit_status.zero?
-
-        container
+        create_container(config)
       end
 
       def create_container(config)

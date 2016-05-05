@@ -13,7 +13,7 @@ module Rocker
         run_config['Cmd'] = [
           '/bin/sh',
           '-c',
-          "# ENTRYPOINT #{entrypoint}"
+          "# ENTRYPOINT #{entrypoint.to_json}"
         ]
 
         run_config
