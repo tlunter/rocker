@@ -1,7 +1,11 @@
 module Rocker
   module Instructions
     class Expose < Base
+      include Rocker::Util::LogHelper
+
       attr_reader :ports
+
+      log_prefix "Expose"
 
       def initialize(ports)
         @ports = Array(ports)
@@ -28,13 +32,16 @@ module Rocker
       end
 
       def split_port_and_proto(binding)
+        debug "Parsing port binding: #{binding}"
         ports, _, proto = binding.rpartition("/")
 
         if ports.nil?
           ports, proto = proto, 'tcp'
+          debug "Did not find slash, ports: #{ports} proto: #{proto}"
         end
 
         ports = parse_ports(ports)
+        debug "Parsed ports: #{ports}"
         ports.map { |p| "#{p}/#{proto}" }
       end
 
