@@ -17,6 +17,8 @@ module Rocker
           '-c',
           "# VOLUME #{volumes.to_json}"
         ]
+
+        run_config
       end
 
       def formatted_volumes
