@@ -35,7 +35,7 @@ module Rocker
         debug "Parsing port binding: #{binding}"
         ports, _, proto = binding.rpartition("/")
 
-        if ports.nil?
+        if ports.empty?
           ports, proto = proto, 'tcp'
           debug "Did not find slash, ports: #{ports} proto: #{proto}"
         end
@@ -60,12 +60,14 @@ module Rocker
         (lowContainerPort .. highContainerPort).to_a
       end
 
-      def part_port_range(port)
+      def parse_port_range(port)
         if port.include?("-")
           low, high = port.split("-", 1).map { |i| Integer(i) }
         else
           low = high = Integer(port)
         end
+
+        [low, high]
       end
     end
   end
